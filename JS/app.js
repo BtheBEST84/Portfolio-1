@@ -4,14 +4,7 @@ canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
 // Predefined colors for the balls (instead of background)
-const ballColors = [
-  "DeepPink",
-  "DodgerBlue",
-  "LimeGreen",
-  "Gold",
-  "Purple",
-  "Crimson",
-];
+const ballColors = ["DeepPink", "DodgerBlue", "LimeGreen", "Gold"];
 let currentColorIndex = 0; // Tracks the current color index
 
 function updateBallColors() {
