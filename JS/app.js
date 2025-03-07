@@ -1,16 +1,19 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
-// Function to resize the canvas correctly on all screens
+// Function to resize the canvas properly for high-DPI screens
 function resizeCanvas() {
-  const dpr = window.devicePixelRatio || 1; // Get device pixel ratio
-  canvas.width = window.innerWidth * dpr;
+  const dpr = window.devicePixelRatio || 1; // Get device pixel ratio (Retina, OLED, etc.)
+  canvas.style.width = window.innerWidth + "px"; // Ensure it visually fills the screen
+  canvas.style.height = window.innerHeight + "px";
+
+  canvas.width = window.innerWidth * dpr; // Set actual resolution
   canvas.height = window.innerHeight * dpr;
 
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // Properly scale without shifting animation
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // Scale correctly to avoid distortion
 }
 
-resizeCanvas(); // Call on page load
+resizeCanvas(); // Apply on page load
 
 // Predefined colors for the balls (instead of background)
 const ballColors = ["DeepPink", "DodgerBlue", "LimeGreen", "Gold"];
@@ -34,7 +37,7 @@ function updateBallColors() {
 class Ball {
   constructor(effect) {
     this.effect = effect;
-    this.x = Math.random() * this.effect.width; // Spawn anywhere on screen
+    this.x = Math.random() * this.effect.width; // Random start position
     this.y = Math.random() * this.effect.height;
     this.radius = Math.random() * 100 + 80;
 
