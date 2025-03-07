@@ -12,14 +12,7 @@ function resizeCanvas() {
 resizeCanvas(); // Call on load
 
 // Predefined colors for the balls
-const ballColors = [
-  "DeepPink",
-  "DodgerBlue",
-  "LimeGreen",
-  "Gold",
-  "Purple",
-  "Crimson",
-];
+const ballColors = ["DeepPink", "DodgerBlue", "LimeGreen", "Gold"];
 let currentColorIndex = 0;
 let nextColorIndex = 0;
 let transitionFactor = 1;
