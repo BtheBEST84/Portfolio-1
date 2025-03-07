@@ -3,6 +3,32 @@ const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
+// Predefined colors for the balls (instead of background)
+const ballColors = [
+  "DeepPink",
+  "DodgerBlue",
+  "LimeGreen",
+  "Gold",
+  "Purple",
+  "Crimson",
+];
+let currentColorIndex = 0; // Tracks the current color index
+
+function updateBallColors() {
+  let scrollY = window.scrollY;
+  let section = Math.floor(scrollY / window.innerHeight); // Determine current viewport section
+
+  let newColorIndex = section % ballColors.length; // Loop through colors
+  if (newColorIndex !== currentColorIndex) {
+    currentColorIndex = newColorIndex;
+
+    // Update the color of all balls dynamically
+    effect.metaballsArray.forEach((ball) => {
+      ball.color = ballColors[currentColorIndex];
+    });
+  }
+}
+
 class Ball {
   constructor(effect) {
     this.effect = effect;
@@ -20,8 +46,8 @@ class Ball {
 
     this.centerForce = Math.random() * 0.01 + 0.002; // Stronger pull towards center
 
-    const colors = ["DeepPink"];
-    this.color = colors[Math.floor(Math.random() * colors.length)];
+    // Assign the first color dynamically
+    this.color = ballColors[currentColorIndex];
   }
 
   update() {
@@ -43,7 +69,7 @@ class Ball {
   }
 
   draw(context) {
-    context.fillStyle = this.color;
+    context.fillStyle = this.color; // Each ball uses its assigned color
     context.beginPath();
     context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
     context.fill();
@@ -88,7 +114,9 @@ effect.init(20);
 console.log(effect);
 
 function animate() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  updateBallColors(); // Change ball colors dynamically on scroll
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height); // Keep background transparent
   effect.update();
   effect.draw(ctx);
   requestAnimationFrame(animate);
@@ -101,3 +129,5 @@ window.addEventListener("resize", function () {
   canvas.height = window.innerHeight;
   effect.reset(canvas.width, canvas.height);
 });
+
+window.addEventListener("scroll", updateBallColors);
