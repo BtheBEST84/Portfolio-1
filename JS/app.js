@@ -1,21 +1,27 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
-// Function to resize the canvas properly for high-DPI screens
+// Function to properly resize the canvas for high-resolution screens
 function resizeCanvas() {
-  const dpr = window.devicePixelRatio || 1; // Get device pixel ratio (Retina, OLED, etc.)
-  canvas.style.width = window.innerWidth + "px"; // Ensure it visually fills the screen
-  canvas.style.height = window.innerHeight + "px";
+  const dpr = window.devicePixelRatio || 1; // Get device pixel ratio
+  const width = window.innerWidth;
+  const height = window.innerHeight;
 
-  canvas.width = window.innerWidth * dpr; // Set actual resolution
-  canvas.height = window.innerHeight * dpr;
+  // Set canvas display size (CSS pixels)
+  canvas.style.width = width + "px";
+  canvas.style.height = height + "px";
 
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // Scale correctly to avoid distortion
+  // Set actual canvas resolution (higher for better quality)
+  canvas.width = width * dpr;
+  canvas.height = height * dpr;
+
+  // Scale the context so that drawing operations match CSS pixels
+  ctx.scale(dpr, dpr);
 }
 
 resizeCanvas(); // Apply on page load
 
-// Predefined colors for the balls (instead of background)
+// Predefined colors for the balls
 const ballColors = ["DeepPink", "DodgerBlue", "LimeGreen", "Gold"];
 let currentColorIndex = 0; // Tracks the current color index
 
@@ -37,19 +43,19 @@ function updateBallColors() {
 class Ball {
   constructor(effect) {
     this.effect = effect;
-    this.x = Math.random() * this.effect.width; // Random start position
+    this.x = Math.random() * this.effect.width; // Start within screen bounds
     this.y = Math.random() * this.effect.height;
-    this.radius = Math.random() * 100 + 80;
+    this.radius = Math.random() * 80 + 50; // Adjust size for better scaling
 
     // Slower movement with better containment
     this.speedX = (Math.random() - 0.5) * 0.3;
     this.speedY = (Math.random() - 0.5) * 0.3;
 
     this.angle = Math.random() * Math.PI * 2;
-    this.va = (Math.random() - 0.5) * 0.01; // Very subtle angular rotation
-    this.range = Math.random() * 1.5 + 0.5; // Keeps movement small
+    this.va = (Math.random() - 0.5) * 0.01;
+    this.range = Math.random() * 1.5 + 0.5;
 
-    this.centerForce = Math.random() * 0.01 + 0.002; // Stronger pull towards center
+    this.centerForce = Math.random() * 0.01 + 0.002;
 
     // Assign the first color dynamically
     this.color = ballColors[currentColorIndex];
@@ -74,14 +80,14 @@ class Ball {
   }
 
   draw(context) {
-    context.fillStyle = this.color; // Each ball uses its assigned color
+    context.fillStyle = this.color;
     context.beginPath();
     context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
     context.fill();
   }
 
   reset() {
-    this.x = Math.random() * this.effect.width; // Reset position correctly
+    this.x = Math.random() * this.effect.width;
     this.y = Math.random() * this.effect.height;
   }
 }
@@ -129,7 +135,7 @@ function animate() {
 
 animate();
 
-// Resize event to handle high-DPI screens dynamically
+// Resize event to handle high-resolution screens dynamically
 window.addEventListener("resize", function () {
   resizeCanvas();
   effect.reset(canvas.width, canvas.height);
