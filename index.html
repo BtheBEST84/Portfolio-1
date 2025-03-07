@@ -1,4 +1,4 @@
-<html lang="en">
+<!-- <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -30,5 +30,153 @@
     </div>
 
     <script src="JS/app.js"></script>
+  </body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Large Liquid Metaballs</title>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        background-color: black;
+      }
+
+      /* Blob container */
+      .blob-container {
+        position: fixed;
+        width: 100vw;
+        height: 100vh;
+        filter: url(#goo); /* Apply the metaballs effect */
+        pointer-events: none;
+      }
+
+      /* Blob elements */
+      .blob {
+        position: absolute;
+        width: 250px; /* Increased size */
+        height: 250px;
+        background-color: DeepPink;
+        border-radius: 50%;
+        opacity: 0.85;
+        transition: background-color 0.5s ease;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- SVG Filter for the Metaballs Effect -->
+    <svg width="0" height="0">
+      <defs>
+        <filter id="goo">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="40" result="blur" />
+          <feColorMatrix
+            in="blur"
+            mode="matrix"
+            values="1 0 0 0 0
+                            0 1 0 0 0
+                            0 0 1 0 0
+                            0 0 0 30 -10"
+            result="goo"
+          />
+          <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+        </filter>
+      </defs>
+    </svg>
+
+    <!-- Container for the blobs -->
+    <div class="blob-container"></div>
+
+    <script>
+      const container = document.querySelector(".blob-container");
+      const numBlobs = 12; // More blobs for larger animation
+      const colors = ["DeepPink", "DodgerBlue", "LimeGreen", "Gold"];
+      let currentColorIndex = 0;
+
+      function createBlob() {
+        const blob = document.createElement("div");
+        blob.classList.add("blob");
+
+        // Start blobs near the center but allow a wider spread
+        const centerX = window.innerWidth / 2;
+        const centerY = window.innerHeight / 2;
+        blob.style.left =
+          centerX + (Math.random() - 0.5) * 500 + "px"; /* Larger movement */
+        blob.style.top = centerY + (Math.random() - 0.5) * 500 + "px";
+
+        container.appendChild(blob);
+        animateBlob(blob);
+      }
+
+      function animateBlob(blob) {
+        let speedX = (Math.random() - 0.5) * 0.5; // Slow movement
+        let speedY = (Math.random() - 0.5) * 0.5;
+
+        function move() {
+          let x = parseFloat(blob.style.left);
+          let y = parseFloat(blob.style.top);
+
+          // Gentle pull towards center
+          const centerX = window.innerWidth / 2;
+          const centerY = window.innerHeight / 2;
+          const dx = centerX - x;
+          const dy = centerY - y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          // Very soft pull strength (even weaker for a larger effect)
+          const pullStrength = Math.min(0.002 * distance, 0.2);
+
+          // Apply force toward center
+          speedX += (dx / distance) * pullStrength * 0.01;
+          speedY += (dy / distance) * pullStrength * 0.01;
+
+          // Limit speed for smoother motion
+          speedX = Math.min(Math.max(speedX, -0.4), 0.4);
+          speedY = Math.min(Math.max(speedY, -0.4), 0.4);
+
+          // Update position
+          x += speedX;
+          y += speedY;
+
+          // Larger bouncing area
+          if (x < centerX - 500 || x > centerX + 500) speedX *= -0.9;
+          if (y < centerY - 500 || y > centerY + 500) speedY *= -0.9;
+
+          blob.style.left = x + "px";
+          blob.style.top = y + "px";
+
+          requestAnimationFrame(move);
+        }
+
+        move();
+      }
+
+      function updateBlobColors() {
+        currentColorIndex = (currentColorIndex + 1) % colors.length;
+        document.querySelectorAll(".blob").forEach((blob) => {
+          blob.style.backgroundColor = colors[currentColorIndex];
+        });
+      }
+
+      // Create blobs
+      for (let i = 0; i < numBlobs; i++) {
+        createBlob();
+      }
+
+      // Change colors on scroll
+      window.addEventListener("scroll", updateBlobColors);
+
+      // Resize event
+      window.addEventListener("resize", () => {
+        document.querySelectorAll(".blob").forEach((blob) => {
+          blob.style.left =
+            window.innerWidth / 2 + (Math.random() - 0.5) * 500 + "px";
+          blob.style.top =
+            window.innerHeight / 2 + (Math.random() - 0.5) * 500 + "px";
+        });
+      });
+    </script>
   </body>
 </html>

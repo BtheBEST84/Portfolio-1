@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mobile-Friendly Metaballs</title>
+    <title>Large Liquid Metaballs</title>
     <style>
       body {
         margin: 0;
@@ -11,55 +11,40 @@
         background-color: black;
       }
 
+      /* Blob container */
       .blob-container {
         position: fixed;
         width: 100vw;
         height: 100vh;
+        filter: url(#goo); /* Apply the metaballs effect */
+        pointer-events: none;
       }
 
+      /* Blob elements */
       .blob {
         position: absolute;
-        width: 150px;
-        height: 150px;
+        width: 250px; /* Increased size */
+        height: 250px;
         background-color: DeepPink;
         border-radius: 50%;
-        filter: url(#goo);
-        opacity: 0.8;
-      }
-
-      /* Dynamic color changes */
-      @keyframes colorChange {
-        0% {
-          background-color: DeepPink;
-        }
-        25% {
-          background-color: DodgerBlue;
-        }
-        50% {
-          background-color: LimeGreen;
-        }
-        75% {
-          background-color: Gold;
-        }
-        100% {
-          background-color: DeepPink;
-        }
+        opacity: 0.85;
+        transition: background-color 0.5s ease;
       }
     </style>
   </head>
   <body>
-    <!-- SVG Filter for Metaballs Effect -->
+    <!-- SVG Filter for the Metaballs Effect -->
     <svg width="0" height="0">
       <defs>
         <filter id="goo">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="15" result="blur" />
+          <feGaussianBlur in="SourceGraphic" stdDeviation="40" result="blur" />
           <feColorMatrix
             in="blur"
             mode="matrix"
             values="1 0 0 0 0
                             0 1 0 0 0
                             0 0 1 0 0
-                            0 0 0 20 -5"
+                            0 0 0 30 -10"
             result="goo"
           />
           <feComposite in="SourceGraphic" in2="goo" operator="atop" />
@@ -72,8 +57,7 @@
 
     <script>
       const container = document.querySelector(".blob-container");
-      const numBlobs = 8; // Adjust for performance
-
+      const numBlobs = 12; // More blobs for larger animation
       const colors = ["DeepPink", "DodgerBlue", "LimeGreen", "Gold"];
       let currentColorIndex = 0;
 
@@ -81,28 +65,50 @@
         const blob = document.createElement("div");
         blob.classList.add("blob");
 
-        // Set random position
-        blob.style.left = Math.random() * window.innerWidth + "px";
-        blob.style.top = Math.random() * window.innerHeight + "px";
+        // Start blobs near the center but allow a wider spread
+        const centerX = window.innerWidth / 2;
+        const centerY = window.innerHeight / 2;
+        blob.style.left =
+          centerX + (Math.random() - 0.5) * 500 + "px"; /* Larger movement */
+        blob.style.top = centerY + (Math.random() - 0.5) * 500 + "px";
 
         container.appendChild(blob);
         animateBlob(blob);
       }
 
       function animateBlob(blob) {
-        let speedX = (Math.random() - 0.5) * 2;
-        let speedY = (Math.random() - 0.5) * 2;
+        let speedX = (Math.random() - 0.5) * 0.5; // Slow movement
+        let speedY = (Math.random() - 0.5) * 0.5;
 
         function move() {
           let x = parseFloat(blob.style.left);
           let y = parseFloat(blob.style.top);
 
+          // Gentle pull towards center
+          const centerX = window.innerWidth / 2;
+          const centerY = window.innerHeight / 2;
+          const dx = centerX - x;
+          const dy = centerY - y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
+
+          // Very soft pull strength (even weaker for a larger effect)
+          const pullStrength = Math.min(0.002 * distance, 0.2);
+
+          // Apply force toward center
+          speedX += (dx / distance) * pullStrength * 0.01;
+          speedY += (dy / distance) * pullStrength * 0.01;
+
+          // Limit speed for smoother motion
+          speedX = Math.min(Math.max(speedX, -0.4), 0.4);
+          speedY = Math.min(Math.max(speedY, -0.4), 0.4);
+
+          // Update position
           x += speedX;
           y += speedY;
 
-          // Bounce off edges
-          if (x < 0 || x > window.innerWidth - 150) speedX *= -1;
-          if (y < 0 || y > window.innerHeight - 150) speedY *= -1;
+          // Larger bouncing area
+          if (x < centerX - 500 || x > centerX + 500) speedX *= -0.9;
+          if (y < centerY - 500 || y > centerY + 500) speedY *= -0.9;
 
           blob.style.left = x + "px";
           blob.style.top = y + "px";
@@ -131,8 +137,10 @@
       // Resize event
       window.addEventListener("resize", () => {
         document.querySelectorAll(".blob").forEach((blob) => {
-          blob.style.left = Math.random() * window.innerWidth + "px";
-          blob.style.top = Math.random() * window.innerHeight + "px";
+          blob.style.left =
+            window.innerWidth / 2 + (Math.random() - 0.5) * 500 + "px";
+          blob.style.top =
+            window.innerHeight / 2 + (Math.random() - 0.5) * 500 + "px";
         });
       });
     </script>
