@@ -1,50 +1,54 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
-// Function to resize canvas for high-DPI screens (Retina, OLED, etc.)
+// Function to resize the canvas correctly on all screens
 function resizeCanvas() {
   const dpr = window.devicePixelRatio || 1; // Get device pixel ratio
   canvas.width = window.innerWidth * dpr;
   canvas.height = window.innerHeight * dpr;
-  ctx.scale(dpr, dpr); // Scale the context to prevent pixelation
+
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // Properly scale without shifting animation
 }
 
-resizeCanvas(); // Call on load
+resizeCanvas(); // Call on page load
 
-// Predefined colors for the balls
+// Predefined colors for the balls (instead of background)
 const ballColors = ["DeepPink", "DodgerBlue", "LimeGreen", "Gold"];
-let currentColorIndex = 0;
-let nextColorIndex = 0;
-let transitionFactor = 1;
+let currentColorIndex = 0; // Tracks the current color index
 
 function updateBallColors() {
   let scrollY = window.scrollY;
-  let section = Math.floor(scrollY / window.innerHeight);
+  let section = Math.floor(scrollY / window.innerHeight); // Determine current viewport section
 
-  let newColorIndex = section % ballColors.length;
+  let newColorIndex = section % ballColors.length; // Loop through colors
   if (newColorIndex !== currentColorIndex) {
     currentColorIndex = newColorIndex;
-    nextColorIndex = (currentColorIndex + 1) % ballColors.length;
-    transitionFactor = 0;
+
+    // Update the color of all balls dynamically
+    effect.metaballsArray.forEach((ball) => {
+      ball.color = ballColors[currentColorIndex];
+    });
   }
 }
 
 class Ball {
   constructor(effect) {
     this.effect = effect;
-    this.x = this.effect.width * 0.5;
-    this.y = this.effect.height * 0.5;
+    this.x = Math.random() * this.effect.width; // Spawn anywhere on screen
+    this.y = Math.random() * this.effect.height;
     this.radius = Math.random() * 100 + 80;
 
+    // Slower movement with better containment
     this.speedX = (Math.random() - 0.5) * 0.3;
     this.speedY = (Math.random() - 0.5) * 0.3;
 
     this.angle = Math.random() * Math.PI * 2;
-    this.va = (Math.random() - 0.5) * 0.01;
-    this.range = Math.random() * 1.5 + 0.5;
+    this.va = (Math.random() - 0.5) * 0.01; // Very subtle angular rotation
+    this.range = Math.random() * 1.5 + 0.5; // Keeps movement small
 
-    this.centerForce = Math.random() * 0.01 + 0.002;
+    this.centerForce = Math.random() * 0.01 + 0.002; // Stronger pull towards center
 
+    // Assign the first color dynamically
     this.color = ballColors[currentColorIndex];
   }
 
@@ -53,36 +57,29 @@ class Ball {
     this.x += this.speedX + Math.cos(this.angle) * this.range;
     this.y += this.speedY + Math.sin(this.angle) * this.range;
 
+    // Centering force to keep blobs contained
     let dx = this.effect.width / 2 - this.x;
     let dy = this.effect.height / 2 - this.y;
     this.x += dx * this.centerForce;
     this.y += dy * this.centerForce;
 
+    // Prevent escaping the screen
     if (this.x < this.radius || this.x > this.effect.width - this.radius)
       this.speedX *= -1;
     if (this.y < this.radius || this.y > this.effect.height - this.radius)
       this.speedY *= -1;
-
-    if (transitionFactor < 1) {
-      transitionFactor += 0.05;
-    }
   }
 
   draw(context) {
-    context.fillStyle = fadeColor(
-      ballColors[currentColorIndex],
-      ballColors[nextColorIndex],
-      transitionFactor
-    );
-
+    context.fillStyle = this.color; // Each ball uses its assigned color
     context.beginPath();
     context.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
     context.fill();
   }
 
   reset() {
-    this.x = this.effect.width * 0.5;
-    this.y = this.effect.height * 0.5;
+    this.x = Math.random() * this.effect.width; // Reset position correctly
+    this.y = Math.random() * this.effect.height;
   }
 }
 
@@ -114,31 +111,11 @@ class MetaballsEffect {
   }
 }
 
-// Function to fade between two colors
-function fadeColor(color1, color2, factor) {
-  let c1 = getRGB(color1);
-  let c2 = getRGB(color2);
-  let r = Math.round(c1.r + (c2.r - c1.r) * factor);
-  let g = Math.round(c1.g + (c2.g - c1.g) * factor);
-  let b = Math.round(c1.b + (c2.b - c1.b) * factor);
-  return `rgb(${r},${g},${b})`;
-}
-
-// Convert color name to RGB values
-function getRGB(color) {
-  let tempCanvas = document.createElement("canvas");
-  let tempCtx = tempCanvas.getContext("2d");
-  tempCtx.fillStyle = color;
-  tempCtx.fillRect(0, 0, 1, 1);
-  let data = tempCtx.getImageData(0, 0, 1, 1).data;
-  return { r: data[0], g: data[1], b: data[2] };
-}
-
 const effect = new MetaballsEffect(canvas.width, canvas.height);
 effect.init(20);
 
 function animate() {
-  updateBallColors();
+  updateBallColors(); // Change ball colors dynamically on scroll
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   effect.update();
