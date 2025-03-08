@@ -9,7 +9,6 @@ function createBlob() {
 
   const containerRect = container.getBoundingClientRect();
 
-  // Random position inside the container
   let x = Math.random() * (containerRect.width - 150);
   let y = Math.random() * (containerRect.height - 150);
 
@@ -36,7 +35,6 @@ function animateBlobs() {
     x += speedX;
     y += speedY;
 
-    // Bounce off the container edges
     if (x <= 0 || x >= containerRect.width - 150) speedX *= -1;
     if (y <= 0 || y >= containerRect.height - 150) speedY *= -1;
 
@@ -51,14 +49,12 @@ function animateBlobs() {
   requestAnimationFrame(animateBlobs);
 }
 
-// Create blobs
 for (let i = 0; i < numBlobs; i++) {
   createBlob();
 }
 
 animateBlobs();
 
-// Adjust blob positions when resizing
 window.addEventListener("resize", () => {
   const containerRect = container.getBoundingClientRect();
   blobs.forEach((blob) => {

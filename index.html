@@ -3,16 +3,113 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Liquid Metaballs Effect</title>
+    <title>Front-End Developer Portfolio</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="CSS/styles.css" />
   </head>
   <body>
-    <!-- Container that holds the blobs -->
-    <div class="container">
-      <div class="blob-container"></div>
+    <div class="blob-wrapper">
+      <div class="container">
+        <div class="blob-container"></div>
+      </div>
     </div>
 
-    <!-- SVG Filter for Metaballs Effect -->
+    <header>
+      <h1>Welcome to My Portfolio</h1>
+      <p>
+        I'm a Front-End Developer passionate about creating interactive
+        experiences.
+      </p>
+    </header>
+
+    <section class="projects">
+      <h2>My Projects</h2>
+      <div class="project-list">
+        <div class="project-card">
+          <img src="/images/museum-MacbookPro.png" alt="Project 1 Screenshot" />
+          <h3>Museum of Interactivity</h3>
+          <p>A brief description of the project goes here.</p>
+          <div class="buttons">
+            <a
+              href="https://github.com/yourgithub/project1"
+              class="btn github"
+              target="_blank"
+              >GitHub</a
+            >
+            <a
+              href="https://yourwebsite.com/project1"
+              class="btn live"
+              target="_blank"
+              >Live Demo</a
+            >
+          </div>
+        </div>
+
+        <div class="project-card">
+          <img src="images/gamehub-MacbookPro.png" alt="Project 2 Screenshot" />
+          <h3>GameHub</h3>
+          <p>A brief description of the project goes here.</p>
+          <div class="buttons">
+            <a
+              href="https://github.com/yourgithub/project2"
+              class="btn github"
+              target="_blank"
+              >GitHub</a
+            >
+            <a
+              href="https://yourwebsite.com/project2"
+              class="btn live"
+              target="_blank"
+              >Live Demo</a
+            >
+          </div>
+        </div>
+
+        <div class="project-card">
+          <img
+            src="images/racingbear-MacbookPro.png"
+            alt="Project 3 Screenshot"
+          />
+          <h3>RacingBear</h3>
+          <p>A brief description of the project goes here.</p>
+          <div class="buttons">
+            <a
+              href="https://github.com/yourgithub/project3"
+              class="btn github"
+              target="_blank"
+              >GitHub</a
+            >
+            <a
+              href="https://yourwebsite.com/project3"
+              class="btn live"
+              target="_blank"
+              >Live Demo</a
+            >
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <h3>Contact Me</h3>
+      <p>Feel free to reach out through my social channels:</p>
+      <div class="social-links">
+        <a href="https://linkedin.com/in/yourprofile" target="_blank">
+          <img src="images/linkedin.svg" alt="LinkedIn" />
+        </a>
+        <a href="https://twitter.com/yourprofile" target="_blank">
+          <img src="images/twitter.svg" alt="Twitter" />
+        </a>
+        <a href="mailto:your.email@example.com">
+          <img src="images/email.svg" alt="Email" />
+        </a>
+      </div>
+    </footer>
+
     <svg width="0" height="0">
       <defs>
         <filter id="goo">
@@ -21,9 +118,9 @@
             in="blur"
             mode="matrix"
             values="1 0 0 0 0
-                            0 1 0 0 0
-                            0 0 1 0 0
-                            0 0 0 40 -15"
+                    0 1 0 0 0
+                    0 0 1 0 0
+                    0 0 0 40 -15"
             result="goo"
           />
           <feComposite in="SourceGraphic" in2="goo" operator="atop" />
