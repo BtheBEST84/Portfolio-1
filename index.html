@@ -37,7 +37,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Final Liquid Metaballs Fix</title>
+    <title>Final Metaballs Fix (No Color Change)</title>
     <style>
       body {
         margin: 0;
@@ -80,7 +80,6 @@
         border-radius: 50%;
         opacity: 1; /* No transparency */
         will-change: transform;
-        mix-blend-mode: plus-lighter; /* Enhances the melting effect */
       }
     </style>
   </head>
@@ -90,7 +89,7 @@
       <div class="blob-container"></div>
     </div>
 
-    <!-- Strongest SVG Filter for Proper Liquid Effect -->
+    <!-- Enhanced SVG Filter for Perfect Metaballs Effect -->
     <svg width="0" height="0">
       <defs>
         <filter id="goo">
@@ -101,7 +100,7 @@
             values="1 0 0 0 0
                             0 1 0 0 0
                             0 0 1 0 0
-                            0 0 0 50 -20"
+                            0 0 0 40 -10"
             result="goo"
           />
           <feComposite in="SourceGraphic" in2="goo" operator="atop" />
