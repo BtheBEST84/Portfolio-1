@@ -37,49 +37,71 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Free Moving Liquid Metaballs</title>
+    <title>Liquid Metaballs with Stronger Merging</title>
     <style>
       body {
         margin: 0;
         overflow: hidden;
         background-color: black;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      /* Container for blobs */
+      .container {
+        position: relative;
+        width: 80vw; /* Responsive size */
+        height: 80vh;
+        max-width: 800px;
+        max-height: 600px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0px 0px 30px rgba(255, 255, 255, 0.2);
       }
 
       /* Blob container */
       .blob-container {
-        position: fixed;
-        width: 100vw;
-        height: 100vh;
-        filter: url(#goo); /* Apply the metaballs effect */
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        filter: url(#goo); /* Apply stronger metaballs effect */
         pointer-events: none;
       }
 
       /* Blob elements */
       .blob {
         position: absolute;
-        width: 250px;
-        height: 250px;
+        width: 150px;
+        height: 150px;
         background-color: DeepPink;
         border-radius: 50%;
-        opacity: 1; /* No transparency */
+        opacity: 0.95; /* Helps strengthen the merging effect */
         will-change: transform;
         mix-blend-mode: normal; /* Prevents color blending */
       }
     </style>
   </head>
   <body>
-    <!-- SVG Filter for the Metaballs Effect -->
+    <!-- Container that holds the blobs -->
+    <div class="container">
+      <div class="blob-container"></div>
+    </div>
+
+    <!-- Enhanced SVG Filter for Stronger Metaballs Effect -->
     <svg width="0" height="0">
       <defs>
         <filter id="goo">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="30" result="blur" />
+          <feGaussianBlur in="SourceGraphic" stdDeviation="40" result="blur" />
           <feColorMatrix
             in="blur"
             mode="matrix"
             values="1 0 0 0 0
                             0 1 0 0 0
                             0 0 1 0 0
-                            0 0 0 30 -10"
+                            0 0 0 35 -15"
             result="goo"
           />
           <feComposite in="SourceGraphic" in2="goo" operator="atop" />
@@ -87,50 +109,48 @@
       </defs>
     </svg>
 
-    <!-- Container for the blobs -->
-    <div class="blob-container"></div>
-
     <script>
-      const container = document.querySelector(".blob-container");
-      const numBlobs = 4;
+      const container = document.querySelector(".container");
+      const blobContainer = document.querySelector(".blob-container");
+      const numBlobs = 5;
       let blobs = [];
 
       function createBlob() {
         const blob = document.createElement("div");
         blob.classList.add("blob");
 
-        const centerX = window.innerWidth / 2;
-        const centerY = window.innerHeight / 2;
+        const containerRect = container.getBoundingClientRect();
 
-        // Larger movement area (increased range to 700px)
-        let x = centerX + (Math.random() - 0.5) * 700;
-        let y = centerY + (Math.random() - 0.5) * 700;
+        // Random position inside the container
+        let x = Math.random() * (containerRect.width - 150);
+        let y = Math.random() * (containerRect.height - 150);
 
         blob.style.transform = `translate(${x}px, ${y}px)`;
 
-        container.appendChild(blob);
+        blobContainer.appendChild(blob);
         blobs.push({
           element: blob,
           x,
           y,
-          speedX: (Math.random() - 0.5) * 1.2, // Increased speed for more movement
-          speedY: (Math.random() - 0.5) * 1.2,
+          speedX: (Math.random() - 0.5) * 2, // Balanced speed
+          speedY: (Math.random() - 0.5) * 2,
         });
 
         return blob;
       }
 
       function animateBlobs() {
-        const maxMove = 700; // Allows larger movement area
+        const containerRect = container.getBoundingClientRect();
+
         blobs.forEach((blob) => {
           let { element, x, y, speedX, speedY } = blob;
 
           x += speedX;
           y += speedY;
 
-          // Bounce off the movement area edges
-          if (x < -maxMove || x > window.innerWidth + maxMove) speedX *= -1;
-          if (y < -maxMove || y > window.innerHeight + maxMove) speedY *= -1;
+          // Bounce off the container edges
+          if (x <= 0 || x >= containerRect.width - 150) speedX *= -1;
+          if (y <= 0 || y >= containerRect.height - 150) speedY *= -1;
 
           element.style.transform = `translate(${x}px, ${y}px)`;
 
@@ -150,13 +170,12 @@
 
       animateBlobs();
 
-      // Handle resize
+      // Adjust blob positions when resizing
       window.addEventListener("resize", () => {
-        const centerX = window.innerWidth / 2;
-        const centerY = window.innerHeight / 2;
+        const containerRect = container.getBoundingClientRect();
         blobs.forEach((blob) => {
-          blob.x = centerX + (Math.random() - 0.5) * 700;
-          blob.y = centerY + (Math.random() - 0.5) * 700;
+          blob.x = Math.random() * (containerRect.width - 150);
+          blob.y = Math.random() * (containerRect.height - 150);
         });
       });
     </script>
