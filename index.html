@@ -37,7 +37,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Solid Liquid Metaballs</title>
+    <title>Pushed & Pulled Liquid Metaballs</title>
     <style>
       body {
         margin: 0;
@@ -59,11 +59,11 @@
         position: absolute;
         width: 250px;
         height: 250px;
-        background-color: DeepPink; /* All blobs share the same color */
+        background-color: DeepPink;
         border-radius: 50%;
         opacity: 1; /* No transparency */
         will-change: transform;
-        mix-blend-mode: normal; /* Prevent color blending */
+        mix-blend-mode: normal; /* Prevents color blending */
       }
     </style>
   </head>
@@ -102,9 +102,9 @@
         const centerX = window.innerWidth / 2;
         const centerY = window.innerHeight / 2;
 
-        // Keep blobs closer together to enhance merging effect
-        let x = centerX + (Math.random() - 0.5) * 250;
-        let y = centerY + (Math.random() - 0.5) * 250;
+        // Larger movement area (increased range to 500px)
+        let x = centerX + (Math.random() - 0.5) * 500;
+        let y = centerY + (Math.random() - 0.5) * 500;
 
         blob.style.transform = `translate(${x}px, ${y}px)`;
 
@@ -127,24 +127,34 @@
         blobs.forEach((blob) => {
           let { element, x, y, speedX, speedY } = blob;
 
-          // Move towards the center slightly (pull effect)
+          // Calculate distance to center
           let dx = centerX - x;
           let dy = centerY - y;
           let distance = Math.sqrt(dx * dx + dy * dy);
 
-          let pullStrength = Math.min(0.001 * distance, 0.05);
-          speedX += (dx / distance) * pullStrength;
-          speedY += (dy / distance) * pullStrength;
+          // **PULL & PUSH LOGIC**
+          let pullStrength = Math.min(0.001 * distance, 0.03); // Weak pull
+          let pushStrength = Math.max(0.05 - distance * 0.0001, 0); // Push when too close
+
+          if (distance < 200) {
+            // Push away if too close
+            speedX -= (dx / distance) * pushStrength;
+            speedY -= (dy / distance) * pushStrength;
+          } else {
+            // Pull towards center if too far
+            speedX += (dx / distance) * pullStrength;
+            speedY += (dy / distance) * pullStrength;
+          }
 
           // Cap speed for smooth motion
-          speedX = Math.max(-0.25, Math.min(0.25, speedX));
-          speedY = Math.max(-0.25, Math.min(0.25, speedY));
+          speedX = Math.max(-0.3, Math.min(0.3, speedX));
+          speedY = Math.max(-0.3, Math.min(0.3, speedY));
 
           x += speedX;
           y += speedY;
 
-          // Keep blobs bouncing inside a controlled area
-          const maxMove = 300;
+          // Allow blobs to move in a larger space (500px)
+          const maxMove = 500;
           if (x < centerX - maxMove || x > centerX + maxMove) speedX *= -0.9;
           if (y < centerY - maxMove || y > centerY + maxMove) speedY *= -0.9;
 
@@ -171,8 +181,8 @@
         const centerX = window.innerWidth / 2;
         const centerY = window.innerHeight / 2;
         blobs.forEach((blob) => {
-          blob.x = centerX + (Math.random() - 0.5) * 250;
-          blob.y = centerY + (Math.random() - 0.5) * 250;
+          blob.x = centerX + (Math.random() - 0.5) * 500;
+          blob.y = centerY + (Math.random() - 0.5) * 500;
         });
       });
     </script>
