@@ -12,6 +12,10 @@ main {
   align-items: center;
 }
 
+a {
+  text-decoration: none;
+}
+
 body {
   margin: 0;
   overflow-x: hidden;
