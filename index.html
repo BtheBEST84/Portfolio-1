@@ -91,7 +91,7 @@
 
     <script>
       const container = document.querySelector(".blob-container");
-      const numBlobs = 12; // More blobs for larger animation
+      const numBlobs = 3; // More blobs for larger animation
       const colors = ["DeepPink", "DodgerBlue", "LimeGreen", "Gold"];
       let currentColorIndex = 0;
 
@@ -103,8 +103,8 @@
         const centerX = window.innerWidth / 2;
         const centerY = window.innerHeight / 2;
         blob.style.left =
-          centerX + (Math.random() - 0.5) * 500 + "px"; /* Larger movement */
-        blob.style.top = centerY + (Math.random() - 0.5) * 500 + "px";
+          centerX + (Math.random() - 0.5) * 700 + "px"; /* Larger movement */
+        blob.style.top = centerY + (Math.random() - 0.5) * 700 + "px";
 
         container.appendChild(blob);
         animateBlob(blob);
