@@ -37,7 +37,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Perfect Liquid Metaballs for Mobile</title>
+    <title>Final Mobile Metaballs Fix</title>
     <style>
       body {
         margin: 0;
@@ -67,8 +67,18 @@
         position: absolute;
         width: 100%;
         height: 100%;
-        filter: url(#goo); /* Apply the metaballs effect */
-        will-change: filter, transform; /* Forces GPU acceleration */
+        filter: url(#goo); /* Apply metaballs effect */
+        pointer-events: none;
+        transform-style: preserve-3d; /* Ensures proper rendering */
+      }
+
+      /* Extra blur overlay for stronger effect on mobile */
+      .blur-overlay {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        backdrop-filter: blur(20px);
+        opacity: 0.3;
         pointer-events: none;
       }
 
@@ -95,20 +105,22 @@
     <!-- Container that holds the blobs -->
     <div class="container">
       <div class="blob-container"></div>
+      <div class="blur-overlay"></div>
+      <!-- Extra layer for blending -->
     </div>
 
-    <!-- Strongest SVG Filter for Proper Melting Effect -->
+    <!-- Strongest SVG Filter for Proper Liquid Effect -->
     <svg width="0" height="0">
       <defs>
         <filter id="goo">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="60" result="blur" />
+          <feGaussianBlur in="SourceGraphic" stdDeviation="40" result="blur" />
           <feColorMatrix
             in="blur"
             mode="matrix"
             values="1 0 0 0 0
                             0 1 0 0 0
                             0 0 1 0 0
-                            0 0 0 50 -20"
+                            0 0 0 40 -15"
             result="goo"
           />
           <feComposite in="SourceGraphic" in2="goo" operator="atop" />
