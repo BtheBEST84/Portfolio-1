@@ -1,3 +1,8 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
 html,
 body {
   height: 100%;
@@ -161,7 +166,7 @@ header {
 footer {
   background-color: #f8f9fa;
   text-align: center;
-  padding: 20px;
+  padding: 20px 0;
   width: 100%;
   font-size: 1.1rem;
   margin-top: auto;
