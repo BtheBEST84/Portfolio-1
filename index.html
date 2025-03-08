@@ -74,10 +74,10 @@
       /* Blob elements */
       .blob {
         position: absolute;
-        background-color: blue;
+        background-color: DeepPink;
         border-radius: 50%;
         opacity: 0.85;
-        transition: background-color 0.5s ease;
+        will-change: transform;
       }
     </style>
   </head>
@@ -110,13 +110,15 @@
       const blobContainer = document.querySelector(".blob-container");
       let blobs = [];
       let animationFrame;
+      let isLowPerformance = /iPhone|Android/.test(navigator.userAgent); // Detect mobile devices
 
       function getBlobConfig() {
         const screenWidth = window.innerWidth;
-        if (screenWidth > 1800) return { count: 20, size: 180, speed: 1.5 }; // Large screens
-        if (screenWidth > 1200) return { count: 15, size: 160, speed: 1.3 }; // Medium-large screens
-        if (screenWidth > 800) return { count: 10, size: 140, speed: 1.1 }; // Tablets / small desktops
-        return { count: 6, size: 120, speed: 0.8 }; // Small screens (better performance)
+        if (isLowPerformance) return { count: 5, size: 100, speed: 0.8 }; // Ultra-low blobs for phones
+        if (screenWidth > 1800) return { count: 15, size: 180, speed: 1.5 }; // Large screens
+        if (screenWidth > 1200) return { count: 12, size: 160, speed: 1.3 }; // Medium-large screens
+        if (screenWidth > 800) return { count: 8, size: 140, speed: 1.1 }; // Tablets / small desktops
+        return { count: 6, size: 120, speed: 0.9 }; // Small screens (optimized)
       }
 
       function createBlob(size, speed) {
@@ -128,12 +130,16 @@
         blob.style.width = `${size}px`;
         blob.style.height = `${size}px`;
 
-        blob.style.left = Math.random() * (containerRect.width - size) + "px";
-        blob.style.top = Math.random() * (containerRect.height - size) + "px";
+        let x = Math.random() * (containerRect.width - size);
+        let y = Math.random() * (containerRect.height - size);
+
+        blob.style.transform = `translate3d(${x}px, ${y}px, 0)`;
 
         blobContainer.appendChild(blob);
         blobs.push({
           element: blob,
+          x: x,
+          y: y,
           speedX: (Math.random() - 0.5) * speed,
           speedY: (Math.random() - 0.5) * speed,
           size: size,
@@ -146,20 +152,17 @@
         const containerRect = container.getBoundingClientRect();
 
         blobs.forEach((blob, index) => {
-          if (index % 2 !== 0) return; // Reduce updates per frame for better performance
+          if (isLowPerformance && index % 2 !== 0) return; // Reduce updates on mobile for better performance
 
-          let x = parseFloat(blob.element.style.left);
-          let y = parseFloat(blob.element.style.top);
-          const size = blob.size;
+          blob.x += blob.speedX;
+          blob.y += blob.speedY;
 
-          x += blob.speedX;
-          y += blob.speedY;
+          if (blob.x <= 0 || blob.x >= containerRect.width - blob.size)
+            blob.speedX *= -1;
+          if (blob.y <= 0 || blob.y >= containerRect.height - blob.size)
+            blob.speedY *= -1;
 
-          if (x <= 0 || x >= containerRect.width - size) blob.speedX *= -1;
-          if (y <= 0 || y >= containerRect.height - size) blob.speedY *= -1;
-
-          blob.element.style.left = x + "px";
-          blob.element.style.top = y + "px";
+          blob.element.style.transform = `translate3d(${blob.x}px, ${blob.y}px, 0)`;
         });
 
         animationFrame = requestAnimationFrame(animateBlobs);
