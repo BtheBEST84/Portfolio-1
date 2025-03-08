@@ -54,11 +54,3 @@ for (let i = 0; i < numBlobs; i++) {
 }
 
 animateBlobs();
-
-window.addEventListener("resize", () => {
-  const containerRect = container.getBoundingClientRect();
-  blobs.forEach((blob) => {
-    blob.x = Math.random() * (containerRect.width - 150);
-    blob.y = Math.random() * (containerRect.height - 150);
-  });
-});
