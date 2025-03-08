@@ -37,7 +37,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Expanded Liquid Metaballs</title>
+    <title>Free Moving Liquid Metaballs</title>
     <style>
       body {
         margin: 0;
@@ -102,9 +102,9 @@
         const centerX = window.innerWidth / 2;
         const centerY = window.innerHeight / 2;
 
-        // Larger movement area (increased range to 500px)
-        let x = centerX + (Math.random() - 0.5) * 500;
-        let y = centerY + (Math.random() - 0.5) * 500;
+        // Larger movement area (increased range to 700px)
+        let x = centerX + (Math.random() - 0.5) * 700;
+        let y = centerY + (Math.random() - 0.5) * 700;
 
         blob.style.transform = `translate(${x}px, ${y}px)`;
 
@@ -113,40 +113,24 @@
           element: blob,
           x,
           y,
-          speedX: (Math.random() - 0.5) * 0.3,
-          speedY: (Math.random() - 0.5) * 0.3,
+          speedX: (Math.random() - 0.5) * 1.2, // Increased speed for more movement
+          speedY: (Math.random() - 0.5) * 1.2,
         });
 
         return blob;
       }
 
       function animateBlobs() {
-        const centerX = window.innerWidth / 2;
-        const centerY = window.innerHeight / 2;
-
+        const maxMove = 700; // Allows larger movement area
         blobs.forEach((blob) => {
           let { element, x, y, speedX, speedY } = blob;
-
-          // Move towards the center slightly (weaker pull effect)
-          let dx = centerX - x;
-          let dy = centerY - y;
-          let distance = Math.sqrt(dx * dx + dy * dy);
-
-          let pullStrength = Math.min(0.0008 * distance, 0.03);
-          speedX += (dx / distance) * pullStrength;
-          speedY += (dy / distance) * pullStrength;
-
-          // Cap speed for smooth motion
-          speedX = Math.max(-0.25, Math.min(0.25, speedX));
-          speedY = Math.max(-0.25, Math.min(0.25, speedY));
 
           x += speedX;
           y += speedY;
 
-          // Allow blobs to move in a larger space (500px)
-          const maxMove = 500;
-          if (x < centerX - maxMove || x > centerX + maxMove) speedX *= -0.9;
-          if (y < centerY - maxMove || y > centerY + maxMove) speedY *= -0.9;
+          // Bounce off the movement area edges
+          if (x < -maxMove || x > window.innerWidth + maxMove) speedX *= -1;
+          if (y < -maxMove || y > window.innerHeight + maxMove) speedY *= -1;
 
           element.style.transform = `translate(${x}px, ${y}px)`;
 
@@ -171,8 +155,8 @@
         const centerX = window.innerWidth / 2;
         const centerY = window.innerHeight / 2;
         blobs.forEach((blob) => {
-          blob.x = centerX + (Math.random() - 0.5) * 500;
-          blob.y = centerY + (Math.random() - 0.5) * 500;
+          blob.x = centerX + (Math.random() - 0.5) * 700;
+          blob.y = centerY + (Math.random() - 0.5) * 700;
         });
       });
     </script>
