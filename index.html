@@ -37,7 +37,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Optimized Liquid Metaballs</title>
+    <title>Focused Liquid Metaballs</title>
     <style>
       body {
         margin: 0;
@@ -75,10 +75,10 @@
         position: absolute;
         background-color: DeepPink;
         border-radius: 50%;
-        opacity: 0.85;
+        opacity: 0.9;
         will-change: transform;
-        mix-blend-mode: screen; /* Forces blending */
-        filter: blur(20px); /* Stronger blur for merging */
+        mix-blend-mode: plus-lighter; /* Stronger blending effect */
+        filter: blur(8px); /* Less blur for sharper merging */
       }
     </style>
   </head>
@@ -87,39 +87,20 @@
       <div class="blob-container"></div>
     </div>
 
-    <!-- SVG Filter for the Metaballs Effect (Adjusted for Mobile) -->
-    <svg width="0" height="0">
-      <defs>
-        <filter id="goo">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="50" result="blur" />
-          <feColorMatrix
-            in="blur"
-            mode="matrix"
-            values="1 0 0 0 0
-                            0 1 0 0 0
-                            0 0 1 0 0
-                            0 0 0 50 -20"
-            result="goo"
-          />
-          <feComposite in="SourceGraphic" in2="goo" operator="atop" />
-        </filter>
-      </defs>
-    </svg>
-
     <script>
       const container = document.querySelector(".container");
       const blobContainer = document.querySelector(".blob-container");
       let blobs = [];
       let animationFrame;
-      let isLowPerformance = /iPhone|Android/.test(navigator.userAgent); // Detect mobile devices
+      let isLowPerformance = /iPhone|Android/.test(navigator.userAgent);
 
       function getBlobConfig() {
         const screenWidth = window.innerWidth;
-        if (isLowPerformance) return { count: 5, size: 120, speed: 0.8 }; // Ultra-low blobs for phones
-        if (screenWidth > 1800) return { count: 15, size: 180, speed: 1.5 }; // Large screens
-        if (screenWidth > 1200) return { count: 12, size: 160, speed: 1.3 }; // Medium-large screens
-        if (screenWidth > 800) return { count: 8, size: 140, speed: 1.1 }; // Tablets / small desktops
-        return { count: 6, size: 120, speed: 0.9 }; // Small screens (optimized)
+        if (isLowPerformance) return { count: 6, size: 110, speed: 0.7 }; // Optimized for phones
+        if (screenWidth > 1800) return { count: 15, size: 180, speed: 1.2 }; // Large screens
+        if (screenWidth > 1200) return { count: 12, size: 160, speed: 1.1 }; // Medium-large screens
+        if (screenWidth > 800) return { count: 8, size: 140, speed: 1.0 }; // Tablets / small desktops
+        return { count: 6, size: 120, speed: 0.9 }; // Small screens
       }
 
       function createBlob(size, speed) {
@@ -131,11 +112,11 @@
         blob.style.width = `${size}px`;
         blob.style.height = `${size}px`;
 
-        // **Start blobs closer together for better merging**
-        let x = containerRect.width / 2 + (Math.random() - 0.5) * 100;
-        let y = containerRect.height / 2 + (Math.random() - 0.5) * 100;
+        // **Start blobs even closer together for strong merging**
+        let x = containerRect.width / 2 + (Math.random() - 0.5) * 60;
+        let y = containerRect.height / 2 + (Math.random() - 0.5) * 60;
 
-        blob.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+        blob.style.transform = `translate(${x}px, ${y}px)`;
 
         blobContainer.appendChild(blob);
         blobs.push({
@@ -164,7 +145,7 @@
           if (blob.y <= 0 || blob.y >= containerRect.height - blob.size)
             blob.speedY *= -1;
 
-          blob.element.style.transform = `translate3d(${blob.x}px, ${blob.y}px, 0)`;
+          blob.element.style.transform = `translate(${blob.x}px, ${blob.y}px)`;
         });
 
         animationFrame = requestAnimationFrame(animateBlobs);
