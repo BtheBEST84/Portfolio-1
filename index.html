@@ -37,7 +37,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Final Metaballs Fix (No Color Change)</title>
+    <title>Perfect Liquid Metaballs for Mobile</title>
     <style>
       body {
         margin: 0;
@@ -52,7 +52,7 @@
       /* Container for blobs */
       .container {
         position: relative;
-        width: 80vw; /* Responsive size */
+        width: 80vw;
         height: 80vh;
         max-width: 800px;
         max-height: 600px;
@@ -68,6 +68,7 @@
         width: 100%;
         height: 100%;
         filter: url(#goo); /* Apply the metaballs effect */
+        will-change: filter, transform; /* Forces GPU acceleration */
         pointer-events: none;
       }
 
@@ -78,8 +79,15 @@
         height: 150px;
         background-color: DeepPink;
         border-radius: 50%;
-        opacity: 1; /* No transparency */
+        opacity: 1;
         will-change: transform;
+      }
+
+      @media (max-width: 600px) {
+        .blob {
+          width: 120px;
+          height: 120px;
+        }
       }
     </style>
   </head>
@@ -89,18 +97,18 @@
       <div class="blob-container"></div>
     </div>
 
-    <!-- Enhanced SVG Filter for Perfect Metaballs Effect -->
+    <!-- Strongest SVG Filter for Proper Melting Effect -->
     <svg width="0" height="0">
       <defs>
         <filter id="goo">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="50" result="blur" />
+          <feGaussianBlur in="SourceGraphic" stdDeviation="60" result="blur" />
           <feColorMatrix
             in="blur"
             mode="matrix"
             values="1 0 0 0 0
                             0 1 0 0 0
                             0 0 1 0 0
-                            0 0 0 40 -10"
+                            0 0 0 50 -20"
             result="goo"
           />
           <feComposite in="SourceGraphic" in2="goo" operator="atop" />
@@ -131,7 +139,7 @@
           element: blob,
           x,
           y,
-          speedX: (Math.random() - 0.5) * 2, // Balanced speed
+          speedX: (Math.random() - 0.5) * 2,
           speedY: (Math.random() - 0.5) * 2,
         });
 
