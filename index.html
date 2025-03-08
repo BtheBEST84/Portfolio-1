@@ -37,7 +37,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Optimized Liquid Metaballs</title>
+    <title>Melting Liquid Metaballs</title>
     <style>
       body {
         margin: 0;
@@ -61,8 +61,9 @@
         height: 250px;
         background-color: DeepPink;
         border-radius: 50%;
-        opacity: 0.85;
+        opacity: 0.9;
         will-change: transform;
+        mix-blend-mode: plus-lighter; /* Enhances the merging effect */
       }
     </style>
   </head>
@@ -71,7 +72,7 @@
     <svg width="0" height="0">
       <defs>
         <filter id="goo">
-          <feGaussianBlur in="SourceGraphic" stdDeviation="20" result="blur" />
+          <feGaussianBlur in="SourceGraphic" stdDeviation="30" result="blur" />
           <feColorMatrix
             in="blur"
             mode="matrix"
@@ -91,7 +92,7 @@
 
     <script>
       const container = document.querySelector(".blob-container");
-      const numBlobs = 3;
+      const numBlobs = 4;
       const colors = ["DeepPink", "DodgerBlue", "LimeGreen", "Gold"];
       let currentColorIndex = 0;
       let blobs = [];
@@ -103,9 +104,9 @@
         const centerX = window.innerWidth / 2;
         const centerY = window.innerHeight / 2;
 
-        // Use translate() for performance
-        let x = centerX + (Math.random() - 0.5) * 400;
-        let y = centerY + (Math.random() - 0.5) * 400;
+        // Keep blobs closer together to enhance merging effect
+        let x = centerX + (Math.random() - 0.5) * 250;
+        let y = centerY + (Math.random() - 0.5) * 250;
 
         blob.style.transform = `translate(${x}px, ${y}px)`;
 
@@ -114,8 +115,8 @@
           element: blob,
           x,
           y,
-          speedX: (Math.random() - 0.5) * 0.4,
-          speedY: (Math.random() - 0.5) * 0.4,
+          speedX: (Math.random() - 0.5) * 0.3,
+          speedY: (Math.random() - 0.5) * 0.3,
         });
 
         return blob;
@@ -133,19 +134,19 @@
           let dy = centerY - y;
           let distance = Math.sqrt(dx * dx + dy * dy);
 
-          let pullStrength = Math.min(0.0008 * distance, 0.05);
+          let pullStrength = Math.min(0.001 * distance, 0.05);
           speedX += (dx / distance) * pullStrength;
           speedY += (dy / distance) * pullStrength;
 
           // Cap speed for smooth motion
-          speedX = Math.max(-0.3, Math.min(0.3, speedX));
-          speedY = Math.max(-0.3, Math.min(0.3, speedY));
+          speedX = Math.max(-0.25, Math.min(0.25, speedX));
+          speedY = Math.max(-0.25, Math.min(0.25, speedY));
 
           x += speedX;
           y += speedY;
 
-          // Bounce inside a smaller area for better performance
-          const maxMove = 400;
+          // Keep blobs bouncing inside a controlled area
+          const maxMove = 300;
           if (x < centerX - maxMove || x > centerX + maxMove) speedX *= -0.9;
           if (y < centerY - maxMove || y > centerY + maxMove) speedY *= -0.9;
 
@@ -182,8 +183,8 @@
         const centerX = window.innerWidth / 2;
         const centerY = window.innerHeight / 2;
         blobs.forEach((blob) => {
-          blob.x = centerX + (Math.random() - 0.5) * 300;
-          blob.y = centerY + (Math.random() - 0.5) * 300;
+          blob.x = centerX + (Math.random() - 0.5) * 250;
+          blob.y = centerY + (Math.random() - 0.5) * 250;
         });
       });
     </script>
