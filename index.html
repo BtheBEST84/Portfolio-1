@@ -37,7 +37,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pushed & Pulled Liquid Metaballs</title>
+    <title>Expanded Liquid Metaballs</title>
     <style>
       body {
         margin: 0;
@@ -127,28 +127,18 @@
         blobs.forEach((blob) => {
           let { element, x, y, speedX, speedY } = blob;
 
-          // Calculate distance to center
+          // Move towards the center slightly (weaker pull effect)
           let dx = centerX - x;
           let dy = centerY - y;
           let distance = Math.sqrt(dx * dx + dy * dy);
 
-          // **PULL & PUSH LOGIC**
-          let pullStrength = Math.min(0.001 * distance, 0.03); // Weak pull
-          let pushStrength = Math.max(0.05 - distance * 0.0001, 0); // Push when too close
-
-          if (distance < 200) {
-            // Push away if too close
-            speedX -= (dx / distance) * pushStrength;
-            speedY -= (dy / distance) * pushStrength;
-          } else {
-            // Pull towards center if too far
-            speedX += (dx / distance) * pullStrength;
-            speedY += (dy / distance) * pullStrength;
-          }
+          let pullStrength = Math.min(0.0008 * distance, 0.03);
+          speedX += (dx / distance) * pullStrength;
+          speedY += (dy / distance) * pullStrength;
 
           // Cap speed for smooth motion
-          speedX = Math.max(-0.3, Math.min(0.3, speedX));
-          speedY = Math.max(-0.3, Math.min(0.3, speedY));
+          speedX = Math.max(-0.25, Math.min(0.25, speedX));
+          speedY = Math.max(-0.25, Math.min(0.25, speedY));
 
           x += speedX;
           y += speedY;
