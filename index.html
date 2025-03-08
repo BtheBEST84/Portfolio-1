@@ -1,105 +1,10 @@
-<!-- <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="CSS/styles.css" />
-    <title>Document</title>
-  </head>
-  <body>
-    <div id="canvasContainer">
-      <canvas id="canvas"></canvas>
-    </div>
-    <header class="hero"></header>
-    <div class="div-section">
-      <h1 id="main-title">I'm Thomas - A Front End developer</h1>
-    </div>
-    <div class="div-section" id="portfolio-title">
-      <h2>Take a look at my porfolio</h2>
-    </div>
-    <div class="div-section" id="portfolio-title">
-      <h2>Take a look at my porfolio</h2>
-    </div>
-    <div class="div-section" id="portfolio-title">
-      <h2>Take a look at my porfolio</h2>
-    </div>
-    <div class="div-section" id="portfolio-title">
-      <h2>Take a look at my porfolio</h2>
-    </div>
-    <div class="div-section" id="portfolio-title">
-      <h2>Take a look at my porfolio</h2>
-    </div>
-
-    <script src="JS/app.js"></script>
-  </body>
-</html> -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Final Mobile Metaballs Fix</title>
-    <style>
-      body {
-        margin: 0;
-        overflow: hidden;
-        background-color: black;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-      }
-
-      /* Container for blobs */
-      .container {
-        position: relative;
-        width: 80vw;
-        height: 80vh;
-        max-width: 800px;
-        max-height: 600px;
-        background-color: rgba(255, 255, 255, 0.1);
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow: 0px 0px 30px rgba(255, 255, 255, 0.2);
-      }
-
-      /* Blob container */
-      .blob-container {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        filter: url(#goo); /* Apply metaballs effect */
-        pointer-events: none;
-        transform-style: preserve-3d; /* Ensures proper rendering */
-      }
-
-      /* Extra blur overlay for stronger effect on mobile */
-      .blur-overlay {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        backdrop-filter: blur(20px);
-        opacity: 0.3;
-        pointer-events: none;
-      }
-
-      /* Blob elements */
-      .blob {
-        position: absolute;
-        width: 150px;
-        height: 150px;
-        background-color: DeepPink;
-        border-radius: 50%;
-        opacity: 1;
-        will-change: transform;
-      }
-
-      @media (max-width: 600px) {
-        .blob {
-          width: 120px;
-          height: 120px;
-        }
-      }
-    </style>
+    <title>Liquid Metaballs Effect</title>
+    <link rel="stylesheet" href="CSS/styles.css" />
   </head>
   <body>
     <!-- Container that holds the blobs -->
@@ -109,7 +14,7 @@
       <!-- Extra layer for blending -->
     </div>
 
-    <!-- Strongest SVG Filter for Proper Liquid Effect -->
+    <!-- SVG Filter for Metaballs Effect -->
     <svg width="0" height="0">
       <defs>
         <filter id="goo">
@@ -128,75 +33,6 @@
       </defs>
     </svg>
 
-    <script>
-      const container = document.querySelector(".container");
-      const blobContainer = document.querySelector(".blob-container");
-      const numBlobs = 5;
-      let blobs = [];
-
-      function createBlob() {
-        const blob = document.createElement("div");
-        blob.classList.add("blob");
-
-        const containerRect = container.getBoundingClientRect();
-
-        // Random position inside the container
-        let x = Math.random() * (containerRect.width - 150);
-        let y = Math.random() * (containerRect.height - 150);
-
-        blob.style.transform = `translate(${x}px, ${y}px)`;
-
-        blobContainer.appendChild(blob);
-        blobs.push({
-          element: blob,
-          x,
-          y,
-          speedX: (Math.random() - 0.5) * 2,
-          speedY: (Math.random() - 0.5) * 2,
-        });
-
-        return blob;
-      }
-
-      function animateBlobs() {
-        const containerRect = container.getBoundingClientRect();
-
-        blobs.forEach((blob) => {
-          let { element, x, y, speedX, speedY } = blob;
-
-          x += speedX;
-          y += speedY;
-
-          // Bounce off the container edges
-          if (x <= 0 || x >= containerRect.width - 150) speedX *= -1;
-          if (y <= 0 || y >= containerRect.height - 150) speedY *= -1;
-
-          element.style.transform = `translate(${x}px, ${y}px)`;
-
-          blob.x = x;
-          blob.y = y;
-          blob.speedX = speedX;
-          blob.speedY = speedY;
-        });
-
-        requestAnimationFrame(animateBlobs);
-      }
-
-      // Create blobs
-      for (let i = 0; i < numBlobs; i++) {
-        createBlob();
-      }
-
-      animateBlobs();
-
-      // Adjust blob positions when resizing
-      window.addEventListener("resize", () => {
-        const containerRect = container.getBoundingClientRect();
-        blobs.forEach((blob) => {
-          blob.x = Math.random() * (containerRect.width - 150);
-          blob.y = Math.random() * (containerRect.height - 150);
-        });
-      });
-    </script>
+    <script src="JS/app.js"></script>
   </body>
 </html>
