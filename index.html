@@ -93,13 +93,10 @@
         will-change: transform;
       }
 
-      /* Only apply blur for phones */
       @media (max-width: 600px) {
         .blob {
           width: 120px;
           height: 120px;
-          filter: blur(10px); /* Forces Safari to render blur */
-          -webkit-filter: blur(10px); /* Ensures compatibility */
         }
       }
     </style>
