@@ -108,13 +108,3 @@ body {
   opacity: 1;
   will-change: transform;
 }
-
-/* Only apply blur for phones */
-@media (max-width: 600px) {
-  .blob {
-    width: 120px;
-    height: 120px;
-    filter: blur(10px); /* Ensures Safari respects blur */
-    -webkit-filter: blur(10px);
-  }
-}
