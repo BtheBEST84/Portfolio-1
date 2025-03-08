@@ -37,7 +37,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Melting Liquid Metaballs</title>
+    <title>Solid Liquid Metaballs</title>
     <style>
       body {
         margin: 0;
@@ -59,11 +59,11 @@
         position: absolute;
         width: 250px;
         height: 250px;
-        background-color: DeepPink;
+        background-color: DeepPink; /* All blobs share the same color */
         border-radius: 50%;
-        opacity: 0.9;
+        opacity: 1; /* No transparency */
         will-change: transform;
-        mix-blend-mode: plus-lighter; /* Enhances the merging effect */
+        mix-blend-mode: normal; /* Prevent color blending */
       }
     </style>
   </head>
@@ -93,8 +93,6 @@
     <script>
       const container = document.querySelector(".blob-container");
       const numBlobs = 4;
-      const colors = ["DeepPink", "DodgerBlue", "LimeGreen", "Gold"];
-      let currentColorIndex = 0;
       let blobs = [];
 
       function createBlob() {
@@ -161,22 +159,12 @@
         requestAnimationFrame(animateBlobs);
       }
 
-      function updateBlobColors() {
-        currentColorIndex = (currentColorIndex + 1) % colors.length;
-        document.querySelectorAll(".blob").forEach((blob) => {
-          blob.style.backgroundColor = colors[currentColorIndex];
-        });
-      }
-
       // Create blobs
       for (let i = 0; i < numBlobs; i++) {
         createBlob();
       }
 
       animateBlobs();
-
-      // Change colors on scroll
-      window.addEventListener("scroll", updateBlobColors);
 
       // Handle resize
       window.addEventListener("resize", () => {
