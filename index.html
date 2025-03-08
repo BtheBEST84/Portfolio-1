@@ -73,7 +73,7 @@
       /* Blob elements */
       .blob {
         position: absolute;
-        background-color: DeepPink;
+        background-color: blue;
         border-radius: 50%;
         opacity: 0.9;
         will-change: transform;
@@ -152,7 +152,7 @@
       }
 
       function updateBlobColors() {
-        const colors = ["DeepPink", "DodgerBlue", "LimeGreen", "Gold"];
+        const colors = ["Blue", "DodgerBlue", "LimeGreen", "Gold"];
         let currentColorIndex = Math.floor(Math.random() * colors.length);
         document.querySelectorAll(".blob").forEach((blob) => {
           blob.style.backgroundColor = colors[currentColorIndex];
