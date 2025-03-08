@@ -37,149 +37,146 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Focused Liquid Metaballs</title>
+    <title>Large Liquid Metaballs</title>
     <style>
       body {
         margin: 0;
         overflow: hidden;
         background-color: black;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
       }
 
-      /* Responsive container for blobs */
-      .container {
-        position: relative;
-        width: 80vw;
-        height: 80vh;
-        max-width: 100%;
-        max-height: 100%;
-        overflow: hidden;
-        background-color: rgba(255, 255, 255, 0.1);
-        border-radius: 20px;
-        box-shadow: 0px 0px 30px rgba(255, 255, 255, 0.2);
-      }
-
-      /* Blob container inside */
+      /* Blob container */
       .blob-container {
-        position: absolute;
-        width: 100%;
-        height: 100%;
+        position: fixed;
+        width: 100vw;
+        height: 100vh;
+        filter: url(#goo); /* Apply the metaballs effect */
         pointer-events: none;
       }
 
       /* Blob elements */
       .blob {
         position: absolute;
-        background-color: blue;
+        width: 250px; /* Increased size */
+        height: 250px;
+        background-color: DeepPink;
         border-radius: 50%;
-        opacity: 0.9;
-        will-change: transform;
-        mix-blend-mode: plus-lighter; /* Stronger blending effect */
-        filter: blur(8px); /* Less blur for sharper merging */
+        opacity: 0.85;
+        transition: background-color 0.5s ease;
       }
     </style>
   </head>
   <body>
-    <div class="container">
-      <div class="blob-container"></div>
-    </div>
+    <!-- SVG Filter for the Metaballs Effect -->
+    <svg width="0" height="0">
+      <defs>
+        <filter id="goo">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="40" result="blur" />
+          <feColorMatrix
+            in="blur"
+            mode="matrix"
+            values="1 0 0 0 0
+                            0 1 0 0 0
+                            0 0 1 0 0
+                            0 0 0 30 -10"
+            result="goo"
+          />
+          <feComposite in="SourceGraphic" in2="goo" operator="atop" />
+        </filter>
+      </defs>
+    </svg>
+
+    <!-- Container for the blobs -->
+    <div class="blob-container"></div>
 
     <script>
-      const container = document.querySelector(".container");
-      const blobContainer = document.querySelector(".blob-container");
-      let blobs = [];
-      let animationFrame;
-      let isLowPerformance = /iPhone|Android/.test(navigator.userAgent);
+      const container = document.querySelector(".blob-container");
+      const numBlobs = 12; // More blobs for larger animation
+      const colors = ["DeepPink", "DodgerBlue", "LimeGreen", "Gold"];
+      let currentColorIndex = 0;
 
-      function getBlobConfig() {
-        const screenWidth = window.innerWidth;
-        if (isLowPerformance) return { count: 6, size: 110, speed: 0.7 }; // Optimized for phones
-        if (screenWidth > 1800) return { count: 15, size: 180, speed: 1.2 }; // Large screens
-        if (screenWidth > 1200) return { count: 12, size: 160, speed: 1.1 }; // Medium-large screens
-        if (screenWidth > 800) return { count: 8, size: 140, speed: 1.0 }; // Tablets / small desktops
-        return { count: 6, size: 120, speed: 0.9 }; // Small screens
-      }
-
-      function createBlob(size, speed) {
+      function createBlob() {
         const blob = document.createElement("div");
         blob.classList.add("blob");
 
-        const containerRect = container.getBoundingClientRect();
+        // Start blobs near the center but allow a wider spread
+        const centerX = window.innerWidth / 2;
+        const centerY = window.innerHeight / 2;
+        blob.style.left =
+          centerX + (Math.random() - 0.5) * 500 + "px"; /* Larger movement */
+        blob.style.top = centerY + (Math.random() - 0.5) * 500 + "px";
 
-        blob.style.width = `${size}px`;
-        blob.style.height = `${size}px`;
-
-        // **Start blobs even closer together for strong merging**
-        let x = containerRect.width / 2 + (Math.random() - 0.5) * 60;
-        let y = containerRect.height / 2 + (Math.random() - 0.5) * 60;
-
-        blob.style.transform = `translate(${x}px, ${y}px)`;
-
-        blobContainer.appendChild(blob);
-        blobs.push({
-          element: blob,
-          x: x,
-          y: y,
-          speedX: (Math.random() - 0.5) * speed,
-          speedY: (Math.random() - 0.5) * speed,
-          size: size,
-        });
-
-        return blob;
+        container.appendChild(blob);
+        animateBlob(blob);
       }
 
-      function animateBlobs() {
-        const containerRect = container.getBoundingClientRect();
+      function animateBlob(blob) {
+        let speedX = (Math.random() - 0.5) * 0.5; // Slow movement
+        let speedY = (Math.random() - 0.5) * 0.5;
 
-        blobs.forEach((blob, index) => {
-          if (isLowPerformance && index % 2 !== 0) return; // Reduce updates on mobile for better performance
+        function move() {
+          let x = parseFloat(blob.style.left);
+          let y = parseFloat(blob.style.top);
 
-          blob.x += blob.speedX;
-          blob.y += blob.speedY;
+          // Gentle pull towards center
+          const centerX = window.innerWidth / 2;
+          const centerY = window.innerHeight / 2;
+          const dx = centerX - x;
+          const dy = centerY - y;
+          const distance = Math.sqrt(dx * dx + dy * dy);
 
-          if (blob.x <= 0 || blob.x >= containerRect.width - blob.size)
-            blob.speedX *= -1;
-          if (blob.y <= 0 || blob.y >= containerRect.height - blob.size)
-            blob.speedY *= -1;
+          // Very soft pull strength (even weaker for a larger effect)
+          const pullStrength = Math.min(0.002 * distance, 0.2);
 
-          blob.element.style.transform = `translate(${blob.x}px, ${blob.y}px)`;
-        });
+          // Apply force toward center
+          speedX += (dx / distance) * pullStrength * 0.01;
+          speedY += (dy / distance) * pullStrength * 0.01;
 
-        animationFrame = requestAnimationFrame(animateBlobs);
+          // Limit speed for smoother motion
+          speedX = Math.min(Math.max(speedX, -0.4), 0.4);
+          speedY = Math.min(Math.max(speedY, -0.4), 0.4);
+
+          // Update position
+          x += speedX;
+          y += speedY;
+
+          // Larger bouncing area
+          if (x < centerX - 500 || x > centerX + 500) speedX *= -0.9;
+          if (y < centerY - 500 || y > centerY + 500) speedY *= -0.9;
+
+          blob.style.left = x + "px";
+          blob.style.top = y + "px";
+
+          requestAnimationFrame(move);
+        }
+
+        move();
       }
 
       function updateBlobColors() {
-        const colors = ["Blue", "DodgerBlue", "LimeGreen", "Gold"];
-        let currentColorIndex = Math.floor(Math.random() * colors.length);
+        currentColorIndex = (currentColorIndex + 1) % colors.length;
         document.querySelectorAll(".blob").forEach((blob) => {
           blob.style.backgroundColor = colors[currentColorIndex];
         });
       }
 
-      function resetBlobs() {
-        cancelAnimationFrame(animationFrame);
-        blobContainer.innerHTML = "";
-        blobs = [];
-
-        const { count, size, speed } = getBlobConfig();
-        for (let i = 0; i < count; i++) {
-          createBlob(size, speed);
-        }
-
-        animationFrame = requestAnimationFrame(animateBlobs);
+      // Create blobs
+      for (let i = 0; i < numBlobs; i++) {
+        createBlob();
       }
-
-      // Initialize blobs
-      resetBlobs();
 
       // Change colors on scroll
       window.addEventListener("scroll", updateBlobColors);
 
-      // Adjust blobs on resize
-      window.addEventListener("resize", resetBlobs);
+      // Resize event
+      window.addEventListener("resize", () => {
+        document.querySelectorAll(".blob").forEach((blob) => {
+          blob.style.left =
+            window.innerWidth / 2 + (Math.random() - 0.5) * 500 + "px";
+          blob.style.top =
+            window.innerHeight / 2 + (Math.random() - 0.5) * 500 + "px";
+        });
+      });
     </script>
   </body>
 </html>
