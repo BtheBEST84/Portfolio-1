@@ -41,14 +41,20 @@ header {
   margin: 100px 0 100px 0;
 }
 
+h1 {
+  font-size: 2rem;
+}
+
 h2 {
   margin: 0 30px 20px 30px;
   text-align: center;
+  font-size: 1.5rem;
 }
 
 section p {
   max-width: 1000px;
   margin: 0 30px;
+  font-size: 1rem;
 }
 
 .blob-wrapper {
